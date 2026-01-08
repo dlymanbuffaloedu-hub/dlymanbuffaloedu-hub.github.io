@@ -3,12 +3,453 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CATT CODEX Training - DLYMAN</title>
+    <title>Gladiator Arena - DLYMAN</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b0d12;
+        --card: #141824;
+        --card-strong: #1b2233;
+        --text: #f5f7ff;
+        --muted: #9aa4c7;
+        --accent: #f7c65b;
+        --accent-strong: #f28c2c;
+        --good: #7de08a;
+        --bad: #ff7a90;
+        --border: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(circle at top, #1c2333, #0b0d12 55%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 32px 20px 48px;
+      }
+
+      main {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 2.8vw, 2.8rem);
+        font-weight: 700;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 20px 40px rgba(6, 8, 16, 0.45);
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+
+      .stat {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .stat:last-child {
+        border-bottom: none;
+      }
+
+      .stat span {
+        color: var(--muted);
+      }
+
+      .arena {
+        background: linear-gradient(135deg, rgba(247, 198, 91, 0.08), transparent);
+        border: 1px solid rgba(247, 198, 91, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .arena-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .tag {
+        background: rgba(247, 198, 91, 0.18);
+        border: 1px solid rgba(247, 198, 91, 0.4);
+        color: var(--accent);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
+
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      button {
+        border: none;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      .primary {
+        background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+        color: #1b1202;
+        box-shadow: 0 12px 24px rgba(242, 140, 44, 0.3);
+      }
+
+      .secondary {
+        background: var(--card-strong);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .log {
+        background: #0c101a;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+        max-height: 320px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .log-entry {
+        background: rgba(20, 24, 36, 0.9);
+        border-radius: 12px;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .log-entry .result {
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .result.win {
+        color: var(--good);
+      }
+
+      .result.loss {
+        color: var(--bad);
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      @media (max-width: 640px) {
+        .arena-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
   </head>
   <body>
     <main>
-      <h1>CATT CODEX Training - DLYMAN</h1>
-      <p>Placeholder text for upcoming content.</p>
+      <header>
+        <h1>Gladiator Arena Simulator</h1>
+        <p>
+          Enter the arena, face rival gladiators, and grow stronger with every victory.
+          Each fight scales with your growing legend — pick your battles and chase the next
+          treasure haul.
+        </p>
+      </header>
+
+      <section class="grid">
+        <article class="card" id="gladiator-card">
+          <strong>Your Gladiator</strong>
+          <div class="stat"><span>Name</span><div id="glad-name">Valeria the Bold</div></div>
+          <div class="stat"><span>Level</span><div id="glad-level">1</div></div>
+          <div class="stat"><span>Power</span><div id="glad-power">12</div></div>
+          <div class="stat"><span>Max Health</span><div id="glad-health">90</div></div>
+          <div class="stat"><span>Treasure</span><div id="glad-gold">0</div></div>
+          <div class="stat"><span>Win Streak</span><div id="glad-wins">0</div></div>
+        </article>
+
+        <article class="card" id="enemy-card">
+          <strong>Next Challenger</strong>
+          <div class="stat"><span>Title</span><div id="enemy-name">Bronze Spear</div></div>
+          <div class="stat"><span>Tier</span><div id="enemy-tier">1</div></div>
+          <div class="stat"><span>Power</span><div id="enemy-power">10</div></div>
+          <div class="stat"><span>Max Health</span><div id="enemy-health">80</div></div>
+          <div class="stat"><span>Bounty</span><div id="enemy-bounty">15</div></div>
+        </article>
+
+        <article class="card" id="rewards-card">
+          <strong>Legend Growth</strong>
+          <div class="stat"><span>XP To Next Level</span><div id="glad-xp">10</div></div>
+          <div class="stat"><span>Power Gain</span><div id="glad-power-gain">+2</div></div>
+          <div class="stat"><span>Health Gain</span><div id="glad-health-gain">+12</div></div>
+          <div class="stat"><span>Treasure Bonus</span><div id="glad-bonus">0%</div></div>
+          <p class="muted" style="margin-top: 12px;">
+            Win battles to earn XP, power, and gold. Higher win streaks yield bonus treasure.
+          </p>
+        </article>
+      </section>
+
+      <section class="arena">
+        <div class="arena-header">
+          <div>
+            <div class="tag" id="arena-tier">Arena Tier I</div>
+            <h2>Battle the Arena</h2>
+            <p class="muted">Fight, recover, and rise through increasingly dangerous opponents.</p>
+          </div>
+          <div class="buttons">
+            <button class="primary" id="fight-button">Fight Next Battle</button>
+            <button class="secondary" id="rest-button">Recover &amp; Reset Streak</button>
+          </div>
+        </div>
+
+        <div class="log" id="battle-log" aria-live="polite"></div>
+      </section>
     </main>
+
+    <script>
+      const state = {
+        gladiator: {
+          name: "Valeria the Bold",
+          level: 1,
+          power: 12,
+          maxHealth: 90,
+          xp: 0,
+          xpToNext: 10,
+          gold: 0,
+          wins: 0,
+        },
+        battle: 1,
+      };
+
+      const enemyTitles = [
+        "Bronze Spear",
+        "Crimson Blade",
+        "Sandstorm Duelist",
+        "Steel Lotus",
+        "Lionheart",
+        "Obsidian Guard",
+        "Phantom Strike",
+      ];
+
+      const elements = {
+        gladLevel: document.getElementById("glad-level"),
+        gladPower: document.getElementById("glad-power"),
+        gladHealth: document.getElementById("glad-health"),
+        gladGold: document.getElementById("glad-gold"),
+        gladWins: document.getElementById("glad-wins"),
+        gladXp: document.getElementById("glad-xp"),
+        gladPowerGain: document.getElementById("glad-power-gain"),
+        gladHealthGain: document.getElementById("glad-health-gain"),
+        gladBonus: document.getElementById("glad-bonus"),
+        enemyName: document.getElementById("enemy-name"),
+        enemyTier: document.getElementById("enemy-tier"),
+        enemyPower: document.getElementById("enemy-power"),
+        enemyHealth: document.getElementById("enemy-health"),
+        enemyBounty: document.getElementById("enemy-bounty"),
+        arenaTier: document.getElementById("arena-tier"),
+        log: document.getElementById("battle-log"),
+        fightButton: document.getElementById("fight-button"),
+        restButton: document.getElementById("rest-button"),
+      };
+
+      const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+      const getArenaTier = () => Math.min(5, Math.floor((state.battle - 1) / 4) + 1);
+
+      const calculateEnemy = () => {
+        const tier = getArenaTier();
+        const basePower = 8 + tier * 3 + state.battle;
+        const baseHealth = 70 + tier * 18 + state.battle * 4;
+        const bounty = 10 + tier * 8 + state.battle * 3;
+        const title = enemyTitles[(state.battle - 1) % enemyTitles.length];
+        return {
+          title,
+          tier,
+          power: basePower,
+          maxHealth: baseHealth,
+          bounty,
+        };
+      };
+
+      const updateEnemyCard = () => {
+        const enemy = calculateEnemy();
+        elements.enemyName.textContent = enemy.title;
+        elements.enemyTier.textContent = enemy.tier;
+        elements.enemyPower.textContent = enemy.power;
+        elements.enemyHealth.textContent = enemy.maxHealth;
+        elements.enemyBounty.textContent = enemy.bounty;
+        elements.arenaTier.textContent = `Arena Tier ${"I".repeat(enemy.tier)}`;
+      };
+
+      const updateGladiatorCard = () => {
+        const { level, power, maxHealth, gold, wins, xpToNext } = state.gladiator;
+        elements.gladLevel.textContent = level;
+        elements.gladPower.textContent = power;
+        elements.gladHealth.textContent = maxHealth;
+        elements.gladGold.textContent = gold;
+        elements.gladWins.textContent = wins;
+        elements.gladXp.textContent = xpToNext - state.gladiator.xp;
+        elements.gladPowerGain.textContent = `+${2 + Math.floor(level / 2)}`;
+        elements.gladHealthGain.textContent = `+${10 + level * 2}`;
+        elements.gladBonus.textContent = `${wins * 3}%`;
+      };
+
+      const addLogEntry = (entry) => {
+        const div = document.createElement("div");
+        div.className = "log-entry";
+        div.innerHTML = entry;
+        elements.log.prepend(div);
+      };
+
+      const resolveBattle = () => {
+        const enemy = calculateEnemy();
+        let gladHealth = state.gladiator.maxHealth;
+        let enemyHealth = enemy.maxHealth;
+        let round = 1;
+
+        const roundSummaries = [];
+
+        while (gladHealth > 0 && enemyHealth > 0 && round <= 6) {
+          const gladStrike = randomBetween(state.gladiator.power - 2, state.gladiator.power + 4);
+          const enemyStrike = randomBetween(enemy.power - 3, enemy.power + 3);
+          enemyHealth -= gladStrike;
+          gladHealth -= enemyStrike;
+          roundSummaries.push(
+            `Round ${round}: You strike for <strong>${gladStrike}</strong>, take <strong>${enemyStrike}</strong> damage.`
+          );
+          round += 1;
+        }
+
+        const win = gladHealth > enemyHealth;
+        const bonus = state.gladiator.wins * 0.03;
+        const goldEarned = Math.floor(enemy.bounty * (1 + bonus));
+
+        if (win) {
+          state.gladiator.wins += 1;
+          state.gladiator.gold += goldEarned;
+          state.gladiator.xp += 6 + enemy.tier * 2;
+          state.battle += 1;
+
+          while (state.gladiator.xp >= state.gladiator.xpToNext) {
+            state.gladiator.xp -= state.gladiator.xpToNext;
+            state.gladiator.level += 1;
+            state.gladiator.xpToNext = Math.floor(state.gladiator.xpToNext * 1.25 + 6);
+            state.gladiator.power += 2 + Math.floor(state.gladiator.level / 2);
+            state.gladiator.maxHealth += 10 + state.gladiator.level * 2;
+          }
+        } else {
+          state.gladiator.wins = 0;
+          state.gladiator.gold = Math.max(0, state.gladiator.gold - Math.floor(enemy.bounty / 2));
+        }
+
+        return {
+          win,
+          enemy,
+          goldEarned,
+          rounds: roundSummaries,
+        };
+      };
+
+      const handleBattle = () => {
+        const { win, enemy, goldEarned, rounds } = resolveBattle();
+        const resultClass = win ? "win" : "loss";
+        const resultText = win ? "Victory!" : "Defeat...";
+        const summary = win
+          ? `You defeat the ${enemy.title} and earn <strong>${goldEarned}</strong> gold.`
+          : `The ${enemy.title} overwhelms you. You lose some gold and must recover.`;
+
+        addLogEntry(`
+          <div class="result ${resultClass}">${resultText}</div>
+          <div class="muted">${summary}</div>
+          <div style="margin-top: 8px;">${rounds.join("<br />")}</div>
+        `);
+
+        updateGladiatorCard();
+        updateEnemyCard();
+      };
+
+      const handleRest = () => {
+        state.gladiator.wins = 0;
+        state.gladiator.gold += 5;
+        addLogEntry(`
+          <div class="result win">Recovered</div>
+          <div class="muted">You rest between battles, gaining a small tribute and resetting your win streak.</div>
+        `);
+        updateGladiatorCard();
+      };
+
+      elements.fightButton.addEventListener("click", handleBattle);
+      elements.restButton.addEventListener("click", handleRest);
+
+      const init = () => {
+        updateGladiatorCard();
+        updateEnemyCard();
+        addLogEntry(`
+          <div class="result win">Welcome to the Arena</div>
+          <div class="muted">Press "Fight Next Battle" to begin your journey.</div>
+        `);
+      };
+
+      init();
+    </script>
   </body>
 </html>
